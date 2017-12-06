@@ -1,4 +1,5 @@
 const Koa = require('koa');
+const helmet = require('koa-helmet');
 const accesslog = require('koa-accesslog');
 const bodyParser = require('koa-bodyparser');
 const compress = require('koa-compress');
@@ -9,6 +10,7 @@ const apis = require('./api');
 
 const app = new Koa();
 
+app.use(helmet());
 app.use(accesslog());
 app.use(compress());
 app.use(bodyParser());
