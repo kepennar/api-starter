@@ -9,7 +9,6 @@ module.exports = function(path = '/health', checks = []) {
     const checkers = await Promise.all(
       [defaultChecker, ...checks].map(fn => fn())
     );
-    console.log('[DEBUG] checkers', checkers);
     ctx.body = {
       name,
       version,
