@@ -4,6 +4,8 @@
   "description": "A simple node API starter",
   "main": "src/index.js",
   "scripts": {
+    "start": "node src/index.js",
+    "start:dev": "nodemon --config .nodemon.json src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,5 +23,19 @@
   "bugs": {
     "url": "https://github.com/kepennar/api-starter/issues"
   },
-  "homepage": "https://github.com/kepennar/api-starter#readme"
+  "homepage": "https://github.com/kepennar/api-starter#readme",
+  "dependencies": {
+    "app-root-path": "^2.0.1",
+    "convict": "^4.0.2",
+    "dotenv": "^4.0.0",
+    "koa": "^2.4.1",
+    "koa-accesslog": "0.0.2",
+    "koa-bodyparser": "^4.2.0",
+    "koa-compress": "^2.0.0",
+    "koa-router": "^7.3.0",
+    "node-fetch": "^1.7.3"
+  },
+  "devDependencies": {
+    "nodemon": "^1.12.5"
+  }
 }
