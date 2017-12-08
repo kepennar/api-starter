@@ -1,25 +1,23 @@
 const Koa = require('koa');
 const helmet = require('koa-helmet');
-const accesslog = require('koa-accesslog');
+const accesslog = require('koa-morgan');
 const bodyParser = require('koa-bodyparser');
 const compress = require('koa-compress');
 
-const health = require('./health');
-const serverConfig = require('./config').get('server');
+const config = require('./config');
+const serverConfig = config.get('server');
+const logConfig = config.get('log');
+
 const apis = require('./api');
 
 const app = new Koa();
 
 app.use(helmet());
-app.use(accesslog());
+app.use(accesslog(logConfig.format));
 app.use(compress());
 app.use(bodyParser());
 
 app.use(apis.routes(), apis.allowedMethods());
-
-// Possibility to customize path and checks
-//  app.use(health('/ping', [async () => { Check connectivity} ]));
-app.use(health());
 
 app.listen(serverConfig.port);
 console.log('listening on port', serverConfig.port);

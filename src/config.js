@@ -11,7 +11,12 @@ const config = convict({
     }
   },
   log: {
-    format: 'access'
+    format: {
+      doc: 'Log format',
+      format: '*',
+      default: 'tiny',
+      env: 'LOG_FORMAT'
+    }
   }
 });
 
