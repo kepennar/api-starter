@@ -1,11 +1,20 @@
-FROM node:8 as server
-
-ENV NPM_CONFIG_LOGLEVEL warn
+FROM node:lts-alpine as builder
 
 WORKDIR /usr/src/app
-COPY package.json .
 
-RUN npm install --production
+COPY package.json yarn.lock ./
+RUN yarn 
 
-COPY src src
+COPY tsconfig.json  ./
+COPY src ./src
+RUN yarn build && yarn copy:conf
+
+
+FROM node:lts-alpine as server
+
+WORKDIR /usr/src/app
+
+COPY --from=builder /usr/src/app/dist .
+RUN yarn install --production
+
 CMD ["npm", "start"]

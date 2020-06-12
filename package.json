@@ -4,11 +4,12 @@
   "description": "A simple node API starter",
   "main": "src/index.js",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "node index.js",
     "start:dev": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run serve-debug\"",
     "watch-ts": "tsc -w",
     "serve-debug": "nodemon --inspect --config .nodemon.json dist/index.js",
-    "build": "tsc",
+    "build": "tsc --build tsconfig.json",
+    "copy:conf": "cp package.json yarn.lock dist/",
     "prettyall": "prettier --single-quote --write 'src/**/*.*'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
