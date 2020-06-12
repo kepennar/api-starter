@@ -4,8 +4,11 @@
   "description": "A simple node API starter",
   "main": "src/index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "start:dev": "nodemon --config .nodemon.json src/index.js",
+    "start": "node dist/index.js",
+    "start:dev": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run serve-debug\"",
+    "watch-ts": "tsc -w",
+    "serve-debug": "nodemon --inspect --config .nodemon.json dist/index.js",
+    "build": "tsc",
     "prettyall": "prettier --single-quote --write 'src/**/*.*'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -38,7 +41,20 @@
     "node-fetch": "^2.6.0"
   },
   "devDependencies": {
+    "@types/app-root-path": "^1.2.4",
+    "@types/convict": "^5.2.1",
+    "@types/dotenv": "^8.2.0",
+    "@types/koa": "^2.11.3",
+    "@types/koa-bodyparser": "^4.3.0",
+    "@types/koa-compress": "^4.0.0",
+    "@types/koa-helmet": "^5.2.0",
+    "@types/koa-morgan": "^1.0.4",
+    "@types/koa-router": "^7.4.1",
+    "@types/node": "^14.0.13",
+    "@types/node-fetch": "^2.5.7",
+    "concurrently": "^5.2.0",
     "nodemon": "^2.0.4",
-    "prettier": "^2.0.5"
+    "prettier": "^2.0.5",
+    "typescript": "^3.9.5"
   }
 }

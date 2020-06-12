@@ -1,19 +1,19 @@
-const Router = require('koa-router');
-const fetch = require('node-fetch');
+import Router from "koa-router";
+import fetch from "node-fetch";
 
-const ApiError = require('../../errors');
+import { ApiError } from "../../errors";
 
-const stockRouter = new Router();
+export const stockRouter = new Router();
 
-const DEFAULT_SYMBOL = 'GOOG';
+const DEFAULT_SYMBOL = "GOOG";
 
-stockRouter.get('/', async ctx => {
+stockRouter.get("/", async (ctx) => {
   const symbol = ctx.query.symbol || DEFAULT_SYMBOL;
   try {
     const response = await fetch(
       `https://api.iextrading.com/1.0/stock/${symbol}/quote`,
       {
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" },
       }
     );
     ctx.body = await response.json();
@@ -21,10 +21,8 @@ stockRouter.get('/', async ctx => {
     ctx.throw(
       new ApiError(err, {
         message: `Error fetching quote ${symbol}`,
-        statusCode: 400
+        statusCode: 400,
       })
     );
   }
 });
-
-module.exports = stockRouter;
