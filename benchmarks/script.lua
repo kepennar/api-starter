@@ -1,5 +1,5 @@
 
-local routes = {"/available-routes", "/health"}
+local routes = {"/routes", "/health"}
 
 request = function()
   local path = routes[math.random(#routes)]

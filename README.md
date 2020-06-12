@@ -108,8 +108,9 @@ from a list defined
 [here](https://github.com/kepennar/api-starter/blob/master/benchmark/script.lua#L2)
 
 In benchmarks folder
+
 ```bash
-# Default benchmark: Start 2 node.js instance execute request with 400 connections on 12 threads during various duration
+# Default benchmark: Start a Docker instance execute request with 400 connections on 12 threads during various duration
 make
 
 ```

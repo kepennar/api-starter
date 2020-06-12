@@ -1,20 +1,32 @@
-import { IMiddleware } from "koa-router";
+import Koa from "koa";
 import path from "path";
 import appRootPath from "app-root-path";
-const { name, version } = require(appRootPath + path.sep + "package.json");
 
-type Check = () => Promise<unknown>;
+const packageJson = require(`${appRootPath}${path.sep}package.json`);
 
-const defaultChecker = async () => ({ name: "status", value: "OK" });
+export interface ICheckerReturn {
+  name: string;
+  status: boolean;
+}
 
-export function health(checks: Check[] = []): IMiddleware {
-  return async (ctx, next) => {
-    const checkers = await Promise.all(
-      [defaultChecker, ...checks].map((fn) => fn())
+export type ICheckerFn = () => Promise<ICheckerReturn>;
+
+export function health(checks: ICheckerFn[] = []) {
+  return async (ctx: Koa.Context, next: ICheckerFn) => {
+    const checkers: ICheckerReturn[] = await Promise.all(
+      checks.map((fn) => fn())
     );
+    const globalStatus = checkers.reduce(
+      (status, item) => status && item.status,
+      true
+    );
+    if (!globalStatus) {
+      ctx.status = 503;
+    }
     ctx.body = {
-      name,
-      version,
+      name: packageJson.name,
+      version: packageJson.version,
+      status: globalStatus,
       checkers,
     };
     next();
