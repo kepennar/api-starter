@@ -7,7 +7,7 @@
     "start": "node index.js",
     "start:dev": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run serve-debug\"",
     "watch-ts": "tsc -w",
-    "serve-debug": "nodemon --inspect --config .nodemon.json dist/index.js",
+    "serve-debug": "SOURCE_MAP=true nodemon --inspect --config .nodemon.json dist/index.js",
     "build": "tsc --build tsconfig.json",
     "copy:conf": "cp package.json yarn.lock dist/",
     "prettyall": "prettier --single-quote --write 'src/**/*.*'",
@@ -39,7 +39,8 @@
     "koa-helmet": "^5.2.0",
     "koa-morgan": "^1.0.1",
     "koa-router": "^9.0.1",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "source-map-support": "^0.5.19"
   },
   "devDependencies": {
     "@types/app-root-path": "^1.2.4",

@@ -8,6 +8,11 @@ import { apiRouter } from "./api";
 
 const serverConfig = config.get("server");
 const logConfig = config.get("log");
+const debugConfig = config.get("debug");
+
+if (debugConfig.sourcemap) {
+  require("source-map-support").install();
+}
 
 const app = new Koa();
 

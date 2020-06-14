@@ -18,6 +18,14 @@ export const config = convict({
       env: "LOG_FORMAT",
     },
   },
+  debug: {
+    sourcemap: {
+      doc: "Enable source-map",
+      format: "Boolean",
+      default: false,
+      env: "SOURCE_MAP",
+    },
+  },
 });
 
 config.validate({ allowed: "strict" });
