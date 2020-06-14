@@ -13,9 +13,8 @@ export type ICheckerFn = () => Promise<ICheckerReturn>;
 
 export function health(checks: ICheckerFn[] = []) {
   return async (ctx: Koa.Context, next: ICheckerFn) => {
-    const checkers: ICheckerReturn[] = await Promise.all(
-      checks.map((fn) => fn())
-    );
+    const checkers = await Promise.all(checks.map((fn) => fn()));
+
     const globalStatus = checkers.reduce(
       (status, item) => status && item.status,
       true
