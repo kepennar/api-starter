@@ -40,7 +40,7 @@
     "koa-helmet": "^5.2.0",
     "koa-morgan": "^1.0.1",
     "koa-router": "^9.0.1",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "source-map-support": "^0.5.19"
   },
   "devDependencies": {
