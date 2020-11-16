@@ -2,10 +2,15 @@ import { health } from "../../src/api/health";
 import httpMocks from "node-mocks-http";
 import { createApp } from "../../src/app";
 import Koa from "koa";
+import { IRouterParamContext, RouterContext } from "koa-router";
 
+type WithRouterContext = Koa.ParameterizedContext<
+  any,
+  IRouterParamContext<any, any>
+>;
 describe("Health checker", () => {
   let app: Koa;
-  let context: Koa.ParameterizedContext;
+  let context: WithRouterContext;
 
   beforeAll(() => {
     app = createApp();
@@ -14,7 +19,7 @@ describe("Health checker", () => {
   beforeEach(() => {
     const req = httpMocks.createRequest();
     const res = httpMocks.createResponse();
-    context = app.createContext(req, res);
+    context = app.createContext(req, res) as WithRouterContext;
   });
 
   it("should return a valid status code if all checkers are ok", async () => {

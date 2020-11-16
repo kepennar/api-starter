@@ -13,9 +13,9 @@ describe("Support endpoint", () => {
     return request(server).get("/random-url ").expect(404);
   });
 
-  it("GET /health should return healthy status", async () => {
-    const response = await request(server).get("/health ").expect(200);
-    expect(response.body.status).toBeTruthy();
+  it("GET /health should return an error caused by down DB", async () => {
+    const response = await request(server).get("/health ").expect(503);
+    expect(response.body.status).toBeFalsy();
   });
 
   it("GET /routes should return 200 and display a health route", async () => {

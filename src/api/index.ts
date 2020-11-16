@@ -1,8 +1,9 @@
 import Router from "koa-router";
 
 import { health } from "./health";
-import { exampleRouter } from "./stocks";
+import { exampleRouter } from "./todos";
 import { authRouter } from "./auth";
+import { dbChecker } from "./health/db.checker";
 
 export const apiRouter = new Router();
 
@@ -12,7 +13,7 @@ apiRouter.use("/todos", exampleRouter.routes(), exampleRouter.allowedMethods());
 
 // Possibility to customize checks
 //  app.use(health([async () => { Check connectivity} ]));
-apiRouter.get("/health", health());
+apiRouter.get("/health", health([dbChecker]));
 
 apiRouter.get(
   "/routes",
