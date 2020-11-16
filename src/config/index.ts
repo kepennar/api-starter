@@ -1,5 +1,12 @@
 import convict from "convict";
-require("dotenv").config();
+import dotenv from "dotenv";
+import path from "path";
+
+const dotenvPath = process.env.CONFIG_PATH
+  ? path.resolve(process.cwd(), process.env.CONFIG_PATH)
+  : undefined;
+
+dotenv.config({ path: dotenvPath });
 
 export const config = convict({
   app: {

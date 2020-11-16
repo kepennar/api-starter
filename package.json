@@ -13,7 +13,7 @@
     "build": "tsc --build tsconfig.json",
     "copy:conf": "cp -r package.json yarn.lock dist/",
     "prettyall": "prettier --single-quote --write 'src/**/*.*'",
-    "test": "jest --forceExit --coverage --verbose  --detectOpenHandles",
+    "test": "CONFIG_PATH=./.env.test jest --forceExit --coverage --verbose  --detectOpenHandles",
     "test:watch": "yarn test --watchAll"
   },
   "repository": {
