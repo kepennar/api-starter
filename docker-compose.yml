@@ -1,0 +1,35 @@
+version: "3"
+
+services:
+  api:
+    build: ./
+    ports:
+      - ${PORT}:${PORT}
+    environment:
+      - PORT=${PORT}
+      - AUTH_SECRET_KEY=${AUTH_SECRET_KEY}
+      - AUTH_PASSWORD_SALT_ROUNDS=${AUTH_PASSWORD_SALT_ROUNDS}
+      - DB_URL=${DB_URL}
+
+  postgres:
+    image: postgres:latest
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: admin
+    volumes:
+      - pgadmin:/root/.pgadmin
+    ports:
+      - 5050:80 # web ui
+
+volumes:
+  postgres-data:
+  pgadmin:

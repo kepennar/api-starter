@@ -1,5 +1,6 @@
 import { createApp } from "./app";
 import { config } from "./config";
+import { logger } from "./logger";
 
 const serverConfig = config.get("server");
 const debugConfig = config.get("debug");
@@ -10,4 +11,4 @@ if (debugConfig.sourcemap) {
 
 const app = createApp();
 app.listen(serverConfig.port);
-console.log("listening on port", serverConfig.port);
+logger.info(`listening on port ${serverConfig.port}`);

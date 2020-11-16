@@ -1,12 +1,14 @@
 import Router from "koa-router";
 
 import { health } from "./health";
-import { stockRouter } from "./stocks";
+import { exampleRouter } from "./stocks";
+import { authRouter } from "./auth";
 
 export const apiRouter = new Router();
 
 apiRouter.get("/", (ctx) => (ctx.body = "Welcome to Node-API-Starter"));
-apiRouter.use("/stocks", stockRouter.routes(), stockRouter.allowedMethods());
+apiRouter.use("/auth", authRouter.routes(), authRouter.allowedMethods());
+apiRouter.use("/todos", exampleRouter.routes(), exampleRouter.allowedMethods());
 
 // Possibility to customize checks
 //  app.use(health([async () => { Check connectivity} ]));
