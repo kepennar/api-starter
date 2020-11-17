@@ -9,7 +9,10 @@ import {
 } from "../../auth/auth.utilities";
 import { ApiError } from "../../errors";
 import { validateAuthBody, validateRegisterBody } from "./model/Auth.body";
-import { authenticationMiddleware } from "../../auth/auth.strategies";
+import {
+  authenticationMiddleware,
+  AUTH_COOKIE_NAME,
+} from "../../auth/auth.strategies";
 
 export const authRouter = new Router();
 
@@ -28,6 +31,11 @@ authRouter.post("/login", async (ctx) => {
       new ApiError(new Error("login password error"), { statusCode: 403 })
     );
   }
+});
+
+authRouter.post("/logout", async (ctx) => {
+  ctx.cookies.set(AUTH_COOKIE_NAME);
+  ctx.status = 204;
 });
 
 authRouter.post("/register", async (ctx) => {
