@@ -1,4 +1,6 @@
+import { Middleware } from "koa";
 import passport from "koa-passport";
+import compose from "koa-compose";
 import {
   ExtractJwt,
   Strategy as JwtStrategy,
@@ -6,6 +8,9 @@ import {
 } from "passport-jwt";
 import { config } from "../config";
 import { prisma } from "../prisma";
+import { generateJwt, setAuthCookie } from "./auth.utilities";
+import { JwtPayload } from "./model/JwtPayload";
+import { logger } from "../logger";
 
 const authConfig = config.get("auth");
 
@@ -20,7 +25,7 @@ const jwtStrategyOptions: StrategyOptions = {
   secretOrKey: authConfig.jwtSecret,
 };
 passport.use(
-  new JwtStrategy(jwtStrategyOptions, async (jwtPayload, done) => {
+  new JwtStrategy(jwtStrategyOptions, async (jwtPayload: JwtPayload, done) => {
     const user = await prisma.user.findOne({
       where: { email: jwtPayload.email },
     });
@@ -32,3 +37,15 @@ passport.use(
     }
   })
 );
+
+const refreshTokenMiddleware: Middleware = async (context, next) => {
+  const userEmail = context.state.user.email;
+  const token = generateJwt(userEmail);
+  setAuthCookie(context, token);
+  await next();
+};
+
+export const authenticationMiddleware = compose([
+  passport.authenticate("jwt", { session: false }),
+  refreshTokenMiddleware,
+]);

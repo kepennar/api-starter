@@ -1,15 +1,15 @@
 import Router from "koa-router";
 import passport from "koa-passport";
 import { prisma } from "../../prisma";
-import bcrypt from "bcrypt";
 import {
   comparePassword,
   generateJwt,
   hashPassword,
+  setAuthCookie,
 } from "../../auth/auth.utilities";
 import { ApiError } from "../../errors";
 import { validateAuthBody, validateRegisterBody } from "./model/Auth.body";
-import { AUTH_COOKIE_NAME } from "../../auth/auth.strategies";
+import { authenticationMiddleware } from "../../auth/auth.strategies";
 
 export const authRouter = new Router();
 
@@ -21,7 +21,7 @@ authRouter.post("/login", async (ctx) => {
 
   if (user && passwordMatch) {
     const token = generateJwt(email);
-    ctx.cookies.set(AUTH_COOKIE_NAME, token);
+    setAuthCookie(ctx, token);
     ctx.body = { ...user };
   } else {
     ctx.throw(
@@ -45,17 +45,13 @@ authRouter.post("/register", async (ctx) => {
     if (error.code === "P2002") {
       throw new ApiError(error, {
         statusCode: 409,
-        message: "A user with this email allrady exists",
+        message: "A user with this email already exists",
       });
     }
     throw error;
   }
 });
 
-authRouter.get(
-  "/me",
-  passport.authenticate("jwt", { session: false }),
-  async (ctx) => {
-    ctx.body = ctx.state.user;
-  }
-);
+authRouter.get("/me", authenticationMiddleware, async (ctx) => {
+  ctx.body = ctx.state.user;
+});

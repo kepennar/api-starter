@@ -12,3 +12,5 @@ if (debugConfig.sourcemap) {
 const app = createApp();
 app.listen(serverConfig.port);
 logger.info(`listening on port ${serverConfig.port}`);
+
+process.on("SIGTERM", () => process.kill(process.pid, "SIGINT"));
