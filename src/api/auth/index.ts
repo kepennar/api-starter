@@ -1,35 +1,40 @@
+import { Role } from "@prisma/client";
 import Router from "koa-router";
-import passport from "koa-passport";
-import { prisma } from "../../prisma";
+import { logger } from "../../logger";
+import {
+  authenticationMiddleware,
+  AUTH_COOKIE_NAME,
+} from "../../auth/auth.strategies";
 import {
   comparePassword,
   generateJwt,
   hashPassword,
   setAuthCookie,
 } from "../../auth/auth.utilities";
+import { ApiState } from "../../auth/model/JwtPayload";
 import { ApiError } from "../../errors";
+import { prisma } from "../../prisma";
 import { validateAuthBody, validateRegisterBody } from "./model/Auth.body";
-import {
-  authenticationMiddleware,
-  AUTH_COOKIE_NAME,
-} from "../../auth/auth.strategies";
 
-export const authRouter = new Router();
+export const authRouter = new Router<ApiState>();
 
 authRouter.post("/login", async (ctx) => {
   const { email, password } = validateAuthBody(ctx.request.body);
 
   const user = await prisma.user.findOne({ where: { email } });
+  if (!user || user.deleted) {
+    logger.info("Attempt to connect to an inexistant or deleted account");
+    ctx.throw(new ApiError(new Error("login error"), { statusCode: 403 }));
+    return;
+  }
   const passwordMatch = await comparePassword(password, user.password);
 
-  if (user && passwordMatch) {
+  if (passwordMatch) {
     const token = generateJwt(email);
     setAuthCookie(ctx, token);
     ctx.body = { ...user };
   } else {
-    ctx.throw(
-      new ApiError(new Error("login password error"), { statusCode: 403 })
-    );
+    ctx.throw(new ApiError(new Error("login error"), { statusCode: 403 }));
   }
 });
 
@@ -62,4 +67,22 @@ authRouter.post("/register", async (ctx) => {
 
 authRouter.get("/me", authenticationMiddleware, async (ctx) => {
   ctx.body = ctx.state.user;
+});
+
+authRouter.post("/close/:uuid", authenticationMiddleware, async (ctx) => {
+  const authenticatedUser = ctx.state.user;
+  const userIdToBeDeleted = ctx.params.uuid;
+
+  if (
+    authenticatedUser?.role === Role.ADMIN ||
+    authenticatedUser?.id === userIdToBeDeleted
+  ) {
+    await prisma.user.update({
+      where: { id: userIdToBeDeleted },
+      data: { deleted: new Date() },
+    });
+    ctx.status = 204;
+  } else {
+    ctx.status = 403;
+  }
 });

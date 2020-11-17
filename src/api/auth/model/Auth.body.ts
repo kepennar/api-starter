@@ -1,9 +1,9 @@
 import * as Yup from "yup";
 
-type AuthBody = {
+interface AuthBody {
   email: string;
   password: string;
-};
+}
 
 export const AuthBodyValidationSchema = Yup.object()
   .shape<AuthBody>({
@@ -18,11 +18,11 @@ export function validateAuthBody(body: unknown): AuthBody {
   });
 }
 
-type RegisterBody = {
+interface RegisterBody {
   email: string;
   password: string;
   name: string;
-};
+}
 
 export const RegisterBodyValidationSchema = Yup.object()
   .shape<RegisterBody>({

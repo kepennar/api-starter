@@ -22,14 +22,14 @@ const jwtStrategyOptions: StrategyOptions = {
       return req && req.cookies.get(AUTH_COOKIE_NAME);
     },
   ]),
-  secretOrKey: authConfig.jwtSecret,
+  secretOrKey: authConfig.jwtSecret || undefined,
 };
 passport.use(
   new JwtStrategy(jwtStrategyOptions, async (jwtPayload: JwtPayload, done) => {
     const user = await prisma.user.findOne({
       where: { email: jwtPayload.email },
     });
-    if (user) {
+    if (user && !user.deleted) {
       const { password, ...userWithoutPassword } = user;
       done(null, userWithoutPassword);
     } else {
@@ -45,6 +45,9 @@ const refreshTokenMiddleware: Middleware = async (context, next) => {
   await next();
 };
 
+/**
+ * Implements Sliding sessions
+ */
 export const authenticationMiddleware = compose([
   passport.authenticate("jwt", { session: false }),
   refreshTokenMiddleware,

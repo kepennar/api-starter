@@ -1,11 +1,10 @@
 import Router from "koa-router";
 import fetch from "node-fetch";
-import passport from "passport";
 import { authenticationMiddleware } from "../../auth/auth.strategies";
-
+import { ApiState } from "../../auth/model/JwtPayload";
 import { ApiError } from "../../errors";
 
-export const exampleRouter = new Router();
+export const exampleRouter = new Router<ApiState>();
 
 exampleRouter.get("/", authenticationMiddleware, async (ctx) => {
   try {

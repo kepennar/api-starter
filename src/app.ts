@@ -1,3 +1,4 @@
+import { User } from "@prisma/client";
 import Koa from "koa";
 import bodyParser from "koa-bodyparser";
 import compress from "koa-compress";

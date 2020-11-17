@@ -29,7 +29,7 @@ export const config = convict({
     url: {
       doc: "Database connection url",
       format: String,
-      default: null,
+      default: "to be defined",
       env: "DB_URL",
     },
   },
@@ -37,7 +37,7 @@ export const config = convict({
     jwtSecret: {
       doc: "Secret used to generate JWT",
       format: String,
-      default: null,
+      default: "to be defined",
       env: "AUTH_SECRET_KEY",
     },
     passwordSaltRounds: {
