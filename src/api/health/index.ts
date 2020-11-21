@@ -1,18 +1,13 @@
 import appRootPath from "app-root-path";
-import Koa from "koa";
+import { Context, Next, ParameterizedContext } from "koa";
+import Router, { IRouterParamContext, RouterContext } from "koa-router";
 import path from "path";
+import { ICheckerFn } from "./model/checkers.model";
 
 const packageJson = require(`${appRootPath}${path.sep}package.json`);
 
-export interface ICheckerReturn {
-  name: string;
-  status: boolean;
-}
-
-export type ICheckerFn = () => Promise<ICheckerReturn>;
-
-export function health(checks: ICheckerFn[] = []) {
-  return async (ctx: Koa.Context, next: Koa.Next) => {
+export function health(checks: ICheckerFn[] = []): Router.IMiddleware<any, {}> {
+  return async (ctx, next: Next) => {
     const checkers = await Promise.all(checks.map((fn) => fn()));
 
     const globalStatus = checkers.reduce(

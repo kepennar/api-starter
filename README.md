@@ -1,58 +1,79 @@
-# api-starter
+# API-starter
 
-A simple Node.js AP starter
+**A Cloud Native Typescript Node.js API starter**
 
-<img src='./doc/koa.png?raw=true alt="KOA" width="300">
-<img src='./doc/docker.svg?raw=true alt="docker" width="300">
+Build with:
 
-# Start
+- Deployment: [Docker](https://docs.docker.com/)
+- DB: [PostgreSQL](https://www.postgresql.org/)
+- Server: [Node.js](https://nodejs.org/)
+- Language: [Typescript](https://www.typescriptlang.org/)
+- Web framework: [Koa.js](https://koajs.com/)
+- ORM: [Prisma](https://www.prisma.io/)
+- Authentication: [Passport-jwt](http://www.passportjs.org/packages/passport-jwt/)
+- Data validation: [Yup](https://github.com/jquense/yup)
+- Logger: [Winston](https://github.com/winstonjs/winston)
+- Configuration: [Convict](https://github.com/mozilla/node-convict)
 
-Simple:
+## Development
 
-```bash
-npm install
-npm start
+### 1- Configure env
+
+Configure a `.env` file following the `.env.example` file
+
+```env
+POSTGRES_USER=postgres        # postgresql user
+POSTGRES_PASSWORD=admin       # postgresql password
+POSTGRES_DB=api-starter       # postgresql database name
+
+PORT=8080                     # Exposed API port
+DB_URL=postgresql://postgres:admin@localhost:5432/api-starter?schema=public
+
+AUTH_SECRET_KEY=<secret_to_sign_JWT_token>
+AUTH_PASSWORD_SALT_ROUNDS=10  # Number of hashing rounds for password
+AUTH_JWT_DURATION=3600        # Jwt token duration in seconds
+
 ```
 
-## Developing
-
-With a file watcher (`nodemon`)
+### 2- Start the database with docker-compose
 
 ```bash
-npm run start:dev
+docker-compose -f docker-compose-dev.yml up
+```
+
+### 3- Install dependencies and generate the Prisma client
+
+```bash
+yarn
+yarn prisma:generate
+```
+
+### 4- Create the database model
+
+```bash
+yarn prisma:db-upgrade
+```
+
+### 5- Start the API
+
+Start the API with file watcher and debugging activated
+
+```bash
+yarn start:dev
 ```
 
 ## Production
 
-You can start it with the [Dockerfile](https://github.com/kepennar/api-starter/blob/master/Dockerfile)
-provided
+### 1- Configure env
+
+Configure a `.env` file following the `.env.example` file
+
+`DB-URL` should look like `DB_URL=postgresql://postgres:admin@postgres:5432/api-starter?schema=public`
+
+### 2- Start app
 
 ```bash
-docker build -t api-starter .
-docker run -p 80:3000 -d api-starter:latest
-```
-
-## Config
-
-Easily customizable configuration.
-
-With a `.env` file in the project root folder
-
-```bash
-#.env
-
-PORT=3210
-```
-
-Or with environment variables
-
-```bash
-# Export a variable
-export PORT=3210
-npm start
-
-# Directly in one command
-PORT=3210 npm start
+docker-compose up
 ```
 
 # Healthcheck
