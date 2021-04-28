@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+model app_seeds {
+  id         String    @id @default(uuid())
+  seed_name  String    @unique
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+}
+
+// *** USERS ***
+model User {
+  id                    String                 @id @default(uuid())
+  email                 String                 @unique
+  password              String?
+  name                  String
+  roles                 Role[]
+  avatarImages          Json?
+  activated             Boolean                @default(false)
+  emailTokens           EmailToken[]
+  authTokens            AuthToken[]
+  ownFiles              File[]                 @relation("fileOwner")
+  filePermissionTickets FilePermissionTicket[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  updatedBy User?     @relation("UserUpdatedByUser", fields: [updatedByUserId], references: [id])
+  deleted   DateTime?
+
+  updatedByUserId      String?
+  UpdatedUser          User[]                 @relation("UserUpdatedByUser")
+  UpdatedFile          File[]                 @relation("FileUpdatedByUser")
+  FilePermissionTicket FilePermissionTicket[] @relation("UpdatedByUser")
+}
+
+model AuthToken {
+  id         String   @id @default(uuid())
+  jwtId      String   @unique @default(uuid())
+  userId     String
+  expiration DateTime
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model EmailToken {
+  id         String         @id @default(uuid())
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  tokenValue String         @unique
+  type       EmailTokenType
+  active     Boolean        @default(true)
+  expiration DateTime
+  userId     String
+  user       User           @relation(fields: [userId], references: [id])
+}
+
+enum EmailTokenType {
+  ACTIVATION
+  RENEW_PASSWORD
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  USER
+}
+
+// *** Media library *** //
+enum FileType {
+  VIDEO
+  PDF
+}
+
+enum FileLabel {
+  RESUME
+}
+
+model File {
+  id            String      @id @default(uuid())
+  storageFileId String
+  name          String
+  type          FileType
+  labels        FileLabel[]
+  owner         User        @relation("fileOwner", fields: [ownerId], references: [id])
+  ownerId       String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  updatedBy User      @relation("FileUpdatedByUser", fields: [updatedByUserId], references: [id])
+  deleted   DateTime?
+
+  updatedByUserId String
+
+}
+
+enum BucketName {
+  app_avatar
+  media_resume
+}
+
+model FilePermissionTicket {
+  id              String     @id @default(uuid())
+  permissionScope String
+  bucketName      BucketName
+  user            User       @relation(fields: [userId], references: [id])
+  userId          String
+
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  updatedBy User      @relation("UpdatedByUser", fields: [updatedByUserId], references: [id])
+  deleted   DateTime?
+
+  updatedByUserId String
+
+}
